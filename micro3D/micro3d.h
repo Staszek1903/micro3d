@@ -4,7 +4,7 @@
 #include "point3f.h"
 #include "mesh.h"
 #include "transformation.h"
-#include "IOStuff/console.h"
+#include "../IOStuff/console.h"
 
 void calculateNormals(TriangleInd * tris, size_t tris_s, Point3 * verts, Point3 * normals);
 Point3 linePlaneIntersection(Point3 plane_point, Point3 plane_normal, Point3 lineBegin, Point3 lineEnd);
