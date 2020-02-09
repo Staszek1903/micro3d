@@ -2,7 +2,7 @@
 #define RENDERSTATE_H
 
 #include <SFML/Graphics.hpp>
-#include "micro3D/transformation.h"
+#include "transformation.h"
 
 namespace m3d {
 
