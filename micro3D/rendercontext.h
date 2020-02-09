@@ -3,11 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 #include <limits>
-#include "micro3D/rasterization.h"
-#include "micro3D/transformation.h"
-#include "micro3D/model.h"
-#include "micro3D/renderstate.h"
-#include "micro3D/micro3d.h"
+#include "rasterization.h"
+#include "transformation.h"
+#include "model.h"
+#include "renderstate.h"
+#include "micro3d.h"
 
 namespace m3d {
 
