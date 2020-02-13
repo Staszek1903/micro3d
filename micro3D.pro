@@ -16,7 +16,9 @@ SOURCES += \
     IOStuff/touchbuffer.cpp \
     IOStuff/ui.cpp \
     IOStuff/vect.cpp \
+    lighttest.cpp \
     main.cpp \
+    micro3D/color.cpp \
     micro3D/mesh.cpp \
     micro3D/micro3d.cpp \
     micro3D/model.cpp \
@@ -24,6 +26,7 @@ SOURCES += \
     micro3D/rasterization.cpp \
     micro3D/rendercontext.cpp \
     micro3D/renderstate.cpp \
+    micro3D/shaders.cpp \
     micro3D/transformation.cpp
 
 HEADERS += \
@@ -39,6 +42,9 @@ HEADERS += \
     IOStuff/touchbuffer.h \
     IOStuff/ui.h \
     IOStuff/vect.h \
+    lighttest.h \
+    micro3D/color.h \
+    micro3D/lightpoint.h \
     micro3D/mesh.h \
     micro3D/micro3d.h \
     micro3D/model.h \
@@ -46,4 +52,5 @@ HEADERS += \
     micro3D/rasterization.h \
     micro3D/rendercontext.h \
     micro3D/renderstate.h \
+    micro3D/shaders.h \
     micro3D/transformation.h

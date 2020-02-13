@@ -20,6 +20,11 @@ class Model
     void update_matrices();
 
 public:
+
+    Color color = {0,0,0};
+    float alpha = 0;
+
+
     Model(Mesh & mesh, ColorInfo * c_info = nullptr);
     Point3 getPos() const;
     void setPos(const Point3 &value);
@@ -36,6 +41,8 @@ public:
 
     Mesh &getMesh() const;
     ColorInfo & getColorInfo() const;
+    Color getColor() const;
+    void setColor(const Color &value);
 };
 
 }

@@ -89,6 +89,7 @@ void loadMeshFromPlyFile(const char *dir, Mesh *mesh, ColorInfo *c_info)
     unsigned char r,g,bl;
     size_t face_count = 0;
 
+    // searching for metadata
     while(strcmp(buff, "end_header\n")){
         fgets(buff,100,file);
         if(feof(file)) break;
@@ -100,18 +101,23 @@ void loadMeshFromPlyFile(const char *dir, Mesh *mesh, ColorInfo *c_info)
         throw std::runtime_error("in file" + std::string(dir) +" could not find vertex size and triangle size info");
 
     mesh->vertices = (Point3*)          malloc(sizeof (Point3)      * mesh->vertex_count);
-    Color * temp_colors = (Color*)           malloc(sizeof (Color)  * mesh->vertex_count);
+    //Color * temp_colors = (Color*)           malloc(sizeof (Color)  * mesh->vertex_count);
+    c_info->size = mesh->vertex_count;
+    c_info->colors = (Color*) malloc(sizeof (Color) * c_info->size);
 
+
+    // reading vertices information (position and color);
     for(size_t i=0; i<mesh->vertex_count; ++i){
         fgets(buff,100,file);
         if(feof(file)) throw std::runtime_error("in file" + std::string(dir) + "unexpecte EOF");
         sscanf(buff, "%f %f %f %hhu %hhu %hhu", &x,&y,&z,&r,&g,&bl);
         mesh->vertices[i] = {{x,y,z}};
-        temp_colors[i] = {r,g,bl};
+        c_info->colors[i] = {r,g,bl};
     }
 
     int * temp_indices = (int*) malloc(sizeof (int[10]) * face_count);
 
+    // reading triangle information
     mesh->triangle_count = face_count;
     for(size_t i=0; i<face_count; ++i){
         int count;
@@ -125,9 +131,7 @@ void loadMeshFromPlyFile(const char *dir, Mesh *mesh, ColorInfo *c_info)
         mesh->triangle_count += (count-3);
     }
 
-    c_info->size = mesh->triangle_count;
     mesh->triangles = (TriangleInd*) malloc(sizeof (TriangleInd)*mesh->triangle_count);
-    c_info->colors = (Color*) malloc(sizeof (Color) * c_info->size);
 
     //TRIANGULARIZATION
     int triangle_i = 0;
@@ -141,12 +145,12 @@ void loadMeshFromPlyFile(const char *dir, Mesh *mesh, ColorInfo *c_info)
         }
     }
 
-    for(size_t i=0; i<mesh->triangle_count; ++i){
-        Color avr = colorAverage(temp_colors,mesh->triangles[i].i,3);
-        c_info->colors[i] = avr;
-    }
+//    for(size_t i=0; i<mesh->triangle_count; ++i){
+//        Color avr = colorAverage(temp_colors,mesh->triangles[i].i,3);
+//        c_info->colors[i] = avr;
+//    }
 
-    free(temp_colors);
+    //free(temp_colors);
     free(temp_indices);
 }
 

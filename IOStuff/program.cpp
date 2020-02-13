@@ -1,26 +1,29 @@
 #include "program.h"
- Program::Program():win(sf::VideoMode::getDesktopMode(), "title"), console_button(10, 50, 50,
-															  50)
+ Program::Program():win(sf::VideoMode::getDesktopMode(), "title")
 {
     //win.setMouseCursorVisible(false);
 	Console::set_window(&win);
 	Console::get();
     Console::get().show(false);
-        Renderer::setWindow(win);
+    Renderer::setWindow(win);
 	Renderer::get();
-        console_button.setFillColor(sf::Color(0, 0, 0, 128));
-        console_button.setHandler([](const TouchEvent & ev){
-            static bool shown = false;
-            if (ev.state == TouchEvent::END)
-            {
-                shown = !shown;
-                //Console::get() << "Console BUTTON" << shown << "\n";
-                Console::get().show(shown);
-            }
-        });
 
-        win.setFramerateLimit(60);
-        Renderer::get().addDrawable(console_button);
+    console_button.create(10, 50, 50,
+                          50);
+
+    console_button.setFillColor(sf::Color(0, 0, 0, 128));
+    console_button.setHandler([](const TouchEvent & ev){
+        static bool shown = false;
+        if (ev.state == TouchEvent::END)
+        {
+            shown = !shown;
+            //Console::get() << "Console BUTTON" << shown << "\n";
+            Console::get().show(shown);
+        }
+    });
+
+    win.setFramerateLimit(60);
+    Renderer::get().addDrawable(console_button);
 
 	// auto mode = sf::VideoMode::getDesktopMode();
 	// float aspect_ratio = (float)mode.height / (float)mode.width; 

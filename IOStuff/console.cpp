@@ -3,8 +3,13 @@
 Console * Console::instance = nullptr;
 sf::RenderWindow * Console::win_pointer = nullptr;
 
+sf::Font & Console::getFont()
+{
+    return font;
+}
+
 Console::Console(sf::RenderWindow & window)
-: window(window)
+    : window(window)
 {
       if( ! font.loadFromFile( "Arial.ttf" ) )
 	    throw std::runtime_error( " no font.ttf ");	    

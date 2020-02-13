@@ -61,6 +61,7 @@ public:
      * @param d
      */
 	void addDrawable(sf::Drawable & d);
+    void removeDrawable(sf::Drawable & d);
 
     /**
      * @brief drawAll draw all added drawable object

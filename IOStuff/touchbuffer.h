@@ -67,7 +67,9 @@ public:
     void emit(const TouchEvent &ev);
     void emit(const KeyboardEvent & ev);
     void addHandler(TouchHandler & h);
+    void removeHandler(TouchHandler &h);
     void addHandler(KeyboardHandler & h);
+    void removeHandler(KeyboardHandler &h);
     TouchEvent getCurrent();
 
     static TouchBuffer & get();

@@ -41,7 +41,13 @@ void Renderer::draw(sf::Drawable & d)
 
 void Renderer::addDrawable(sf::Drawable & d)
 {
-	drawables.push_back(&d);
+    drawables.push_back(&d);
+}
+
+void Renderer::removeDrawable(sf::Drawable &d)
+{
+    auto iter = std::find(drawables.begin(), drawables.end(), &d);
+    drawables.erase(iter);
 }
 
 void Renderer::drawAll()

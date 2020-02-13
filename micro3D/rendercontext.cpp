@@ -1,32 +1,7 @@
 #include "rendercontext.h"
 
-//#define DRAW_Z_BUFFER
-
-void m3d::putPixel(unsigned int x, unsigned int y, float z, void * arg){
-    PixelArg * parg = (PixelArg*)arg;
-
-    if(x >= parg->screen_size.x || y >= parg->screen_size.y) return;
-
-    if(z <= parg->z_buffer[y * parg->screen_size.x + x]){
-#ifdef DRAW_Z_BUFFER
-        int z_temp = (z-128)*2;
-        z_temp= (z_temp<0)? 0 : (z_temp>255)? 255 : z_temp;
-        sf::Color depth_color(z_temp,z_temp,z_temp);
-
-        parg->image->setPixel(x%parg->screen_size.x,y%parg->screen_size.y,depth_color);
-
-        parg->z_min = std::min(parg->z_min, z);
-        parg->z_max = std::max(parg->z_max, z);
-#else
-        parg->image->setPixel(x%parg->screen_size.x,y%parg->screen_size.y,/*depth_color);*/*parg->color);
-#endif
-        parg->z_buffer[y * parg->screen_size.x + x] = z;
-
-
-    }
-}
-
 m3d::RenderContext::RenderContext(int w, int h)
+    :pixel_arg(vertexColors,vertices_projected, vertices_world, normal, light_point)
 {
     img.create(w,h);
     this->z_buffer = std::make_unique<float[]>(w*h);
@@ -36,9 +11,17 @@ m3d::RenderContext::RenderContext(int w, int h)
     pixel_arg.image = &img;
     pixel_arg.z_buffer = this->z_buffer.get();
     pixel_arg.screen_size = sf::Vector2u(w,h);
-    pixel_arg.color = &draw_color;
 
     render_state.setContextSize( img.getSize() );
+}
+
+void m3d::RenderContext::alloc_workspace(int triangle_count, int vertex_count)
+{
+    model_normals.resize(triangle_count);          // zaalokować to moze jakos na stałoe żeby nie alokowało sie za każdym renderem mesha;
+    world_normals.resize(triangle_count);
+    projected_normals.resize(triangle_count);
+    projected_vertices.resize(vertex_count);
+    world_vertices.resize(vertex_count);
 }
 
 void m3d::RenderContext::clearColor(sf::Color color)
@@ -77,7 +60,7 @@ void m3d::RenderContext::display()
 RasterFunc m3d::RenderContext::getRasterFunc()
 { 
     RasterFunc func;
-    func.putPixel = m3d::putPixel;
+    func.putPixel = current_put_pixel;
     func.arg = &pixel_arg;
     return func;
 }
@@ -87,6 +70,11 @@ m3d::RenderState &m3d::RenderContext::getRenderState()
     return render_state;
 }
 
+void m3d::RenderContext::setPixelFunc(const PixelFunc &value)
+{
+    current_put_pixel = value;
+}
+
 void m3d::RenderContext::drawAxis()
 {
     Point3 o = {0,0,0};
@@ -94,6 +82,8 @@ void m3d::RenderContext::drawAxis()
     Point3 y = {0,1,0};
     Point3 z = {0,0,1};
     RasterFunc raster_func = getRasterFunc();
+    raster_func.putPixel = m3d::putPixelSimple;
+
     sf::Vector2u size = getSize();
 
     Point3 cam_rot = render_state.getCam_rot();
@@ -129,11 +119,11 @@ void m3d::RenderContext::drawAxis()
     y = toScreenSpace(y,size.x,size.y);
     z = toScreenSpace(z,size.x,size.y);
 
-    draw_color = sf::Color::Red;
+    vertexColors[0] = {255,0,0};
     line({(int)o.p[0],(int)o.p[1]},{(int)x.p[0], (int)x.p[1]},raster_func);
-    draw_color = sf::Color::Green;
+    vertexColors[0] = {0,255,0};
     line({(int)o.p[0],(int)o.p[1]},{(int)y.p[0], (int)y.p[1]},raster_func);
-    draw_color = sf::Color::Blue;
+    vertexColors[0] = {0,0,255};
     line({(int)o.p[0],(int)o.p[1]},{(int)z.p[0], (int)z.p[1]},raster_func);
 
 }
@@ -143,11 +133,10 @@ void m3d::RenderContext::render(Model &model)
     RasterFunc raster_func = getRasterFunc();
     Mesh & mesh = model.getMesh();
     ColorInfo & c_info = model.getColorInfo();
-    std::unique_ptr<Point3[]> model_normals = std::make_unique<Point3[]>(mesh.triangle_count);
-    std::unique_ptr<Point3[]> world_normals = std::make_unique<Point3[]>(mesh.triangle_count);
-    std::unique_ptr<Point3[]> projected_normals = std::make_unique<Point3[]>(mesh.triangle_count);
-    std::unique_ptr<Point3[]> projected_vertices = std::make_unique<Point3[]>(mesh.vertex_count);
 
+    alloc_workspace(mesh.triangle_count, mesh.vertex_count);
+
+    // getting transformation matrices
     Matrix4 & model_rotation = model.getRotation();
     Matrix4 & m = model.getTransformation();
     Matrix4 & view = render_state.getViewMatrix();
@@ -155,62 +144,62 @@ void m3d::RenderContext::render(Model &model)
     Matrix4 mv = multMatrix(&m, &view);
     Matrix4 mvp = multMatrix(&mv, &projection);
 
+    // transforming data
     for(size_t i=0; i<mesh.vertex_count; ++i)
-        projected_vertices[i] = transformPoint(mesh.vertices[i],&mvp);
+        world_vertices[i] = transformPoint(mesh.vertices[i],&m);            // transform mesh vertices to world coordinates
 
+    for(size_t i=0; i<mesh.vertex_count; ++i)
+        projected_vertices[i] = transformPoint(mesh.vertices[i],&mvp);      // transform mesh vertices to frustrum coordinates
 
-    calculateNormals(mesh.triangles, mesh.triangle_count, mesh.vertices, model_normals.get());
+    calculateNormals(mesh.triangles, mesh.triangle_count, mesh.vertices, model_normals.data());      // get model normals
 
-    for(size_t i=0; i<mesh.triangle_count; ++i)
+    for(size_t i=0; i<mesh.triangle_count; ++i)         // trasform model normals to world space
     {
         world_normals[i] = transformPoint(model_normals[i], &model_rotation);
     }
 
-    // CALCULATE PROJECTED_NORMALS (SORTED_TRIANGLES, PROJECTED_VERTS) -> PROJECTED NORMALS
-    calculateNormals(mesh.triangles, mesh.triangle_count, projected_vertices.get(), projected_normals.get());
+    calculateNormals(mesh.triangles, mesh.triangle_count, projected_vertices.data(), projected_normals.data());   // calculate frustrum normals
 
-    for(size_t i=0; i<mesh.triangle_count; ++i){
+    light_point.position = render_state.lightpoint.position;        //setting light data
+    light_point.color = render_state.lightpoint.color;
+    light_point.distance = render_state.lightpoint.distance;
+    pixel_arg.ambient = render_state.ambient_light;
 
-        //CULLING
-        float direction = dot(projected_normals[i],{0,0,1});
+    for(size_t i=0; i<mesh.triangle_count; ++i){        // draw triangles
+
+        float direction = dot(projected_normals[i],{0,0,1});            //culling
         if( direction >0 ) continue;
 
         TriangleInd ind = mesh.triangles[i];
-        Point3 triangle[3] = {projected_vertices[ind.i[0]],
-                              projected_vertices[ind.i[1]],
-                              projected_vertices[ind.i[2]]};
+        vertices_projected[0] = projected_vertices[ind.i[0]];      // load vertex data for pixel calculation
+        vertices_projected[1] = projected_vertices[ind.i[1]];
+        vertices_projected[2] = projected_vertices[ind.i[2]];
+        vertices_world[0] = world_vertices[ind.i[0]];
+        vertices_world[1] = world_vertices[ind.i[1]];
+        vertices_world[2] = world_vertices[ind.i[2]];
 
+        vertexColors[0] = c_info.colors[ind.i[0]];          // load color data
+        vertexColors[1] = c_info.colors[ind.i[1]];
+        vertexColors[2] = c_info.colors[ind.i[2]];
 
-        //CLIPPING
+        vertexColors[0] = blend(vertexColors[0], model.color,model.alpha);  // blend vertex color with model color
+        vertexColors[1] = blend(vertexColors[1], model.color,model.alpha);
+        vertexColors[2] = blend(vertexColors[2], model.color,model.alpha);
+
+        normal = world_normals[i];                          // load triangle normal
+
         Point3 clip_result[64][3];
+        int clip_size = clipToScreen(vertices_projected,0.0f,1.0f, clip_result);    //clipping
 
-        int clip_size = clipToScreen(triangle,0.0f,1.0f, clip_result);
-
-        //SHADING
-        float shading = dot(world_normals[i], normalize({1,-1,-1}));
-
-        shading += 1.0f;
-        shading /= 2;
-        if(shading > 1) shading = 1;
-
-
-        draw_color = sf::Color(c_info.colors[i].r *  shading ,
-                                           c_info.colors[i].g *  shading ,
-                                           c_info.colors[i].b *  shading);
+        float shading = dot(world_normals[i], render_state.directional_light_normal) * render_state.directional_light;         //shading
+        shading = (shading<0)?0:(shading>1)?1:shading;
+        pixel_arg.shade = shading;
 
         for(int j=0; j<clip_size; ++j)
-            fillTriangle3D(toScreenSpace(clip_result[j][0], 256,256),
-                    toScreenSpace(clip_result[j][1], 256,256),
-                    toScreenSpace(clip_result[j][2], 256,256),
+            fillTriangleBres(toScreenSpace(clip_result[j][0], pixel_arg.screen_size.x, pixel_arg.screen_size.y),
+                    toScreenSpace(clip_result[j][1],pixel_arg.screen_size.x, pixel_arg.screen_size.y),
+                    toScreenSpace(clip_result[j][2], pixel_arg.screen_size.x, pixel_arg.screen_size.y),
                     raster_func);
 
     }
-
-    drawAxis();
-
-    draw_color = sf::Color::Blue;
-    fillTriangle3D({10,10,100},
-    {100,50,100},
-    {30,100,100},
-                   getRasterFunc());
 }

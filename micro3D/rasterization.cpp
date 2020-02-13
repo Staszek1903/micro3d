@@ -72,7 +72,7 @@ void line(Point a, Point b, RasterFunc func)
 
     while (bresenham_hasnext(&state)) {
         Point pixel = bresenham_next(&state);
-        func.putPixel(pixel.x, pixel.y,1, func.arg);
+        func.putPixel(pixel.x, pixel.y, func.arg);
     }
 }
 
@@ -83,19 +83,46 @@ void strokeTriangle(Triangle t, RasterFunc func)
     line(t.p[2],t.p[0],func);
 }
 
-void fillTriangle(Triangle t, RasterFunc func)
+Point3 get_barycentric_coords(float x, float y, Point3 a, Point3 b, Point3 c){
+    Point3 va = {a.p[0] - x, a.p[1] - y, 0},
+            vb = {b.p[0] - x, b.p[1] - y, 0},
+            vc = {c.p[0] - x, c.p[1] - y, 0};
+
+// współrzędne barycentryczne XD
+    float la = 0.5f*(vb.p[0] * vc.p[1] - vb.p[1] * vc.p[0]);
+    float lb = 0.5f*(vc.p[0] * va.p[1] - vc.p[1] * va.p[0]);
+    float lc = 0.5f*(va.p[0] * vb.p[1] - va.p[1] * vb.p[0]);
+
+//    assert(la>0);
+//    assert(lb>0);
+//    assert(lc>0);
+
+    float l_sum = la+lb+lc;
+
+    la = (l_sum)? la/l_sum : 0;
+    lb = (l_sum)? lb/l_sum : 0;
+    lc = (l_sum)? lc/l_sum : 0;
+
+    return {la,lb,lc};
+}
+
+float get_z(Point3 a, Point3 b, Point3 c, Point3 barocentric){
+    float mean = barocentric.p[0] * a.p[2]
+            + barocentric.p[1] * b.p[2]
+            + barocentric.p[2] * c.p[2];
+
+    return mean;
+}
+
+void fillTriangleBres(Point3 a, Point3 b, Point3 c, RasterFunc func)
 {
-//    Point a = t.x, b = t.y, c = t.p[2];
-//    if(a.x >255 || a.y >255 || b.x > 255 || b.y > 255 ||
-//            a.x <0 || a.y < 0 || b.x < 0 || b.y < 0 ||
-//            a.x >255 || a.y >255 || c.x < 0 || c.y < 0) return;
 
     //UPPER TRIANGLE
-    Point top= t.p[0];
-    Point left = t.p[1];
-    Point right = t.p[2];
-
+    Point top= {(int)a.p[0],(int)a.p[1]};
+    Point left = {(int)b.p[0],(int)b.p[1]};
+    Point right = {(int)c.p[0],(int)c.p[1]};
     Point temp;
+
     if(left.y < top.y){
         temp = top;
         top = left;
@@ -139,31 +166,14 @@ void fillTriangle(Triangle t, RasterFunc func)
         while(right_pix.y != y)
             right_pix = bresenham_next(&bs_right);
 
-        for(int x = left_pix.x; x<= right_pix.x /*+ 1*/ ; ++x)
-            func.putPixel(x,y,-1,func.arg);
+        for(int x = left_pix.x; x<right_pix.x /*+ 1*/ ; ++x){
+            func.putPixel(x,y,func.arg);
+        }
     }
 
 }
 
-float get_z(float x, float y, Point3 a, Point3 b, Point3 c){
-    Point3 va = {a.p[0] - x, a.p[1] - y, 0},
-            vb = {b.p[0] - x, b.p[1] - y, 0},
-            vc = {c.p[0] - x, c.p[1] - y, 0};
 
-// współrzędne barycentryczne XD
-    float la = 0.5f*(vb.p[0] * vc.p[1] - vb.p[1] * vc.p[0]);
-    float lb = 0.5f*(vc.p[0] * va.p[1] - vc.p[1] * va.p[0]);
-    float lc = 0.5f*(va.p[0] * vb.p[1] - va.p[1] * vb.p[0]);
-    float l_sum = la+lb+lc;
-
-    la = (l_sum)? la/l_sum : 0;
-    lb = (l_sum)? lb/l_sum : 0;
-    lc = (l_sum)? lc/l_sum : 0;
-
-
-    float mean = la * a.p[2] + lb * b.p[2] + lc * c.p[2];
-    return mean;
-}
 
 #define X(vect) vect.p[0]
 #define Y(vect) vect.p[1]
@@ -201,11 +211,9 @@ void fillTriangle3D(Point3 a, Point3 b, Point3 c, RasterFunc func)
     }
 
     float start_y = Y(a), middle_y = Y(b), stop_y = Y(c);
-    float ax = X(b) - X(a), ay = Y(b) - Y(a), bx = X(c) - X(a), by = Y(c) - Y(a),
-            az = Z(b) - Z(a), bz = Z(c) - Z(a);
-
+    float ax = X(b) - X(a), ay = Y(b) - Y(a), bx = X(c) - X(a), by = Y(c) - Y(a);
     float da = (ay)? ax/ay : 0, db = (by)? bx/by : 0;
-    float daz = (ay)? az/ay  : 0, dbz = (ay)? bz/ay : 0;
+//    float daz = (ay)? az/ay  : 0, dbz = (ay)? bz/ay : 0;
 
     int upper_height = middle_y - start_y;
     int lower_height = stop_y - middle_y;
@@ -219,8 +227,7 @@ void fillTriangle3D(Point3 a, Point3 b, Point3 c, RasterFunc func)
 
         for(int j = 0; j<line_length; ++j){
             float x = line_a + j;
-            float z = get_z(x,y,a,b,c);
-            func.putPixel(x,y,z,func.arg);
+            func.putPixel(x,y,func.arg);
         }
     }
 
@@ -237,8 +244,17 @@ void fillTriangle3D(Point3 a, Point3 b, Point3 c, RasterFunc func)
 
         for(int j = 0; j<line_length; ++j){
             float x = line_a + j;
-            float z = get_z(x,y,a,b,c);
-            func.putPixel(x,y,z,func.arg);
+            func.putPixel(x,y,func.arg);
         }
     }
 }
+
+Point3 get_bary_point(Point3 a, Point3 b, Point3 c, Point3 bary)
+{
+    return {
+        bary.p[0] * a.p[0] + bary.p[1] * b.p[0] + bary.p[2] * c.p[0],
+        bary.p[0] * a.p[1] + bary.p[1] * b.p[1] + bary.p[2] * c.p[1],
+        bary.p[0] * a.p[2] + bary.p[1] * b.p[2] + bary.p[2] * c.p[2]
+    };
+}
+

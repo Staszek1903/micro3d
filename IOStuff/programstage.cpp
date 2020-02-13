@@ -20,6 +20,7 @@ void ProgramStage::switch_stage()
 		if(current)
 			current->release();
 		current.swap(next);
+        next.reset();
 	}
 }
 

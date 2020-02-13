@@ -1,6 +1,5 @@
 #include "model.h"
 
-
 void m3d::Model::update_matrices()
 {
     if(obsolete_transformation){
@@ -93,5 +92,9 @@ Matrix4 &m3d::Model::getRotation()
     return rotation_matrix;
 }
 
+Color m3d::Model::getColor() const
+{
+    return color;
+}
 
 

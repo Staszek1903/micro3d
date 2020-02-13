@@ -1,9 +1,16 @@
 #include "touchable.h"
 
+Touchable::Touchable()
+    :handler(nullptr)
+{
+
+}
+
 Touchable::Touchable(float x, float y, float w, float h)
 	:handler(nullptr)
 {
 	TouchBuffer::get().addHandler(*this);
+    Renderer::get().addDrawable(*this);
 	//Renderer::get().addDrawable(*this);
 	setPosition(x,y);
 	create_rect(w,h);
@@ -11,11 +18,21 @@ Touchable::Touchable(float x, float y, float w, float h)
 
 Touchable::Touchable(float x, float y, const std::vector<sf::Vector2f > &points)
 :points(points), handler(nullptr)
-	{
-		TouchBuffer::get().addHandler(*this);
-		setPosition(x,y);
-		update();
-	}
+{
+    TouchBuffer::get().addHandler(*this);
+    Renderer::get().addDrawable(*this);
+    setPosition(x,y);
+    update();
+}
+
+void Touchable::create(float x, float y, float w, float h)
+{
+    TouchBuffer::get().addHandler(*this);
+    Renderer::get().addDrawable(*this);
+    //Renderer::get().addDrawable(*this);
+    setPosition(x,y);
+    create_rect(w,h);
+}
 	
 void Touchable::handle(const TouchEvent & ev)
 {
@@ -77,4 +94,6 @@ void Touchable::setHandler(std::function<void (const TouchEvent &)> h)
 
 Touchable::~Touchable()
 {
+    TouchBuffer::get().removeHandler(*this);
+    Renderer::get().removeDrawable(*this);
 }

@@ -1,29 +1,21 @@
 #include "renderstate.h"
 
 
-m3d::RenderState::RenderState()
-{
-    identityMatrix(&projection_matix);
-    identityMatrix(&view_matrix);
-}
-
-Matrix4 &m3d::RenderState::getProjecetionMatrix()
+void m3d::RenderState::projection_update()
 {
     if(obsolete_projection){
         projectionMatrix(&projection_matix,
-                         contextSize.x/contextSize.y,
+                         static_cast<float>(contextSize.y)/contextSize.x,
                          fov, near_clip, far_clip);
         obsolete_projection = false;
     }
-
-    return projection_matix;
 }
 
-Matrix4 &m3d::RenderState::getViewMatrix()
+void m3d::RenderState::view_update()
 {
     if(obsolete_view){
         Matrix4 point_at, rotY, rotX, rot;
-        Point3 camera_target, forward_vect, right_vect;
+        Point3 camera_target;
 
         rotationXMatrix(&rotX, cam_rot.p[1]);
         rotationYMatrix(&rotY, cam_rot.p[0]);
@@ -39,7 +31,23 @@ Matrix4 &m3d::RenderState::getViewMatrix()
         view_matrix = inverseTransform(&point_at);
         obsolete_view = false;
     }
+}
 
+m3d::RenderState::RenderState()
+{
+    identityMatrix(&projection_matix);
+    identityMatrix(&view_matrix);
+}
+
+Matrix4 &m3d::RenderState::getProjecetionMatrix()
+{
+    projection_update();
+    return projection_matix;
+}
+
+Matrix4 &m3d::RenderState::getViewMatrix()
+{
+    view_update();
     return view_matrix;
 }
 
@@ -109,6 +117,22 @@ void m3d::RenderState::setCam_rot(const Point3 &value)
     cam_rot = value;
 }
 
+void m3d::RenderState::setLightPoint(const LightPoint &lightpoint)
+{
+    this->lightpoint = lightpoint;
+}
+
+void m3d::RenderState::setAmbientLight(float ambient)
+{
+    ambient_light = (ambient<0)?0:(ambient>1)?1:ambient;
+}
+
+void m3d::RenderState::setDirectionalLight(Point3 normal, float strenght)
+{
+    directional_light_normal = normalize(normal);
+    directional_light = (strenght<0)?0:(strenght>1)?1:strenght;
+}
+
 
 void m3d::RenderState::rotateCamera(Point3 rot)
 {
@@ -121,6 +145,18 @@ void m3d::RenderState::moveCamera(Point3 move)
 {
     obsolete_view = true;
     cam_pos = add(cam_pos, move);
+}
+
+Point3 m3d::RenderState::getCameraForward()
+{
+    view_update();
+    return forward_vect;
+}
+
+Point3 m3d::RenderState::getCameraRight()
+{
+    view_update();
+    return right_vect;
 }
 
 

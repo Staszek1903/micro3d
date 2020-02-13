@@ -77,6 +77,8 @@ public:
      */
     static void release();
 
+    sf::Font &getFont();
+
 private:
     void addContent(const std::string & text);
     void addChar(char c);
