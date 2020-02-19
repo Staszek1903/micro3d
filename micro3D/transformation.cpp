@@ -1,6 +1,6 @@
 #include "transformation.h"
 
-#include "IOStuff/console.h"
+#include "../IOStuff/console.h"
 
 
 Matrix4 multMatrix(const Matrix4 *m1, const Matrix4 *m2)
