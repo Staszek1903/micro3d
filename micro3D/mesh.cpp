@@ -1,5 +1,5 @@
 #include "mesh.h"
-#include "IOStuff/console.h"
+#include "../IOStuff/console.h"
 
 void loadMeshFromObjFile(const char *dir, Mesh *mesh)
 {
