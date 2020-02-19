@@ -122,6 +122,11 @@ void m3d::RenderState::setLightPoint(const LightPoint &lightpoint)
     this->lightpoint = lightpoint;
 }
 
+LightPoint &m3d::RenderState::getLightPoint()
+{
+    return lightpoint;
+}
+
 void m3d::RenderState::setAmbientLight(float ambient)
 {
     ambient_light = (ambient<0)?0:(ambient>1)?1:ambient;

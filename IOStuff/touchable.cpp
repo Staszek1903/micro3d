@@ -3,7 +3,7 @@
 Touchable::Touchable()
     :handler(nullptr)
 {
-
+    setFillColor(sf::Color::Black);
 }
 
 Touchable::Touchable(float x, float y, float w, float h)
@@ -14,6 +14,7 @@ Touchable::Touchable(float x, float y, float w, float h)
 	//Renderer::get().addDrawable(*this);
 	setPosition(x,y);
 	create_rect(w,h);
+    setFillColor(sf::Color::Black);
 }
 
 Touchable::Touchable(float x, float y, const std::vector<sf::Vector2f > &points)
@@ -23,6 +24,7 @@ Touchable::Touchable(float x, float y, const std::vector<sf::Vector2f > &points)
     Renderer::get().addDrawable(*this);
     setPosition(x,y);
     update();
+    setFillColor(sf::Color::Black);
 }
 
 void Touchable::create(float x, float y, float w, float h)
@@ -32,6 +34,7 @@ void Touchable::create(float x, float y, float w, float h)
     //Renderer::get().addDrawable(*this);
     setPosition(x,y);
     create_rect(w,h);
+    setFillColor(sf::Color::Black);
 }
 	
 void Touchable::handle(const TouchEvent & ev)

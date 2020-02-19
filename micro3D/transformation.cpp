@@ -126,6 +126,14 @@ void rotationMatrix(Matrix4 *m, Point3 axis, float angle)
     m->m[3][3] = 1;
 }
 
+void scaleMatrix(Matrix4 *m, Point3 scale)
+{
+    *m = {{{    scale.p[0], 0,          0,          0               },
+           {    0,          scale.p[1], 0,          0               },
+           {    0,          0,          scale.p[2], 0               },
+           {    0,          0,          0,          1               }}};
+}
+
 void pointAtMatrix(Matrix4 *m, Point3 pos, Point3 target, Point3 up_vect)
 {
     Point3 forward = normalize(sub(target,pos));
@@ -170,3 +178,5 @@ Point3 toScreenSpace(Point3 p, float w, float h)
             0.5f*(p.p[1]*h + h),
             0.5f*(p.p[2]*w + w)};
 }
+
+

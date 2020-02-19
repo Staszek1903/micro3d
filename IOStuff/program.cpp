@@ -22,7 +22,7 @@
         }
     });
 
-    win.setFramerateLimit(60);
+    win.setFramerateLimit(100);
     Renderer::get().addDrawable(console_button);
 
 	// auto mode = sf::VideoMode::getDesktopMode();
@@ -152,8 +152,9 @@ void Program::render()
 	shape.setSize(sf::Vector2f(1000, 1000));
 	win.draw(shape);
 
-	ProgramStage::render_stage(win);
-	Renderer::get().drawAll();
+    Renderer::get().drawAll();
+    ProgramStage::render_stage(win);
+
 	Console::get().display();
 	win.display();
 }

@@ -32,6 +32,7 @@ void rotationZMatrix(Matrix4 *m, float angle);
  * @param angle angle in radians
  */
 void rotationMatrix(Matrix4 *m, Point3 axis, float angle);
+void scaleMatrix(Matrix4 *m, Point3 scale);
 
 void pointAtMatrix(Matrix4 * m, Point3 pos, Point3 target, Point3 up_vect);
 void translationMatrix(Matrix4 *m, Point3 vect);

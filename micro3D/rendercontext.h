@@ -10,6 +10,7 @@
 #include "micro3d.h"
 #include "color.h"
 #include "shaders.h"
+#include <thread>
 
 namespace m3d {
 
@@ -50,6 +51,7 @@ public:
     RasterFunc getRasterFunc();
 
     m3d::RenderState & getRenderState();
+    void setRenderState (const m3d::RenderState & state);
 
     void drawAxis();
     void render(Model &model); // pamietać rzeby wyjebac jak najwiecej do C

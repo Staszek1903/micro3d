@@ -5,6 +5,7 @@ CONFIG -= qt
 
 LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
 LIBS += -lassimp
+LIBS += -lpthread
 
 SOURCES += \
     IOStuff/console.cpp \
@@ -16,8 +17,11 @@ SOURCES += \
     IOStuff/touchbuffer.cpp \
     IOStuff/ui.cpp \
     IOStuff/vect.cpp \
+    benchmark.cpp \
+    demo.cpp \
     lighttest.cpp \
     main.cpp \
+    menu.cpp \
     micro3D/color.cpp \
     micro3D/mesh.cpp \
     micro3D/micro3d.cpp \
@@ -27,7 +31,8 @@ SOURCES += \
     micro3D/rendercontext.cpp \
     micro3D/renderstate.cpp \
     micro3D/shaders.cpp \
-    micro3D/transformation.cpp
+    micro3D/transformation.cpp \
+    terrain.cpp
 
 HEADERS += \
     IOStuff/console.h \
@@ -42,7 +47,10 @@ HEADERS += \
     IOStuff/touchbuffer.h \
     IOStuff/ui.h \
     IOStuff/vect.h \
+    benchmark.h \
+    demo.h \
     lighttest.h \
+    menu.h \
     micro3D/color.h \
     micro3D/lightpoint.h \
     micro3D/mesh.h \
@@ -53,4 +61,5 @@ HEADERS += \
     micro3D/rendercontext.h \
     micro3D/renderstate.h \
     micro3D/shaders.h \
-    micro3D/transformation.h
+    micro3D/transformation.h \
+    terrain.h

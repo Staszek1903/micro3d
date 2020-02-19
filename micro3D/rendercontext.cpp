@@ -17,7 +17,7 @@ m3d::RenderContext::RenderContext(int w, int h)
 
 void m3d::RenderContext::alloc_workspace(int triangle_count, int vertex_count)
 {
-    model_normals.resize(triangle_count);          // zaalokować to moze jakos na stałoe żeby nie alokowało sie za każdym renderem mesha;
+    model_normals.resize(triangle_count);
     world_normals.resize(triangle_count);
     projected_normals.resize(triangle_count);
     projected_vertices.resize(vertex_count);
@@ -68,6 +68,11 @@ RasterFunc m3d::RenderContext::getRasterFunc()
 m3d::RenderState &m3d::RenderContext::getRenderState()
 {
     return render_state;
+}
+
+void m3d::RenderContext::setRenderState(const m3d::RenderState &state)
+{
+    render_state = state;
 }
 
 void m3d::RenderContext::setPixelFunc(const PixelFunc &value)

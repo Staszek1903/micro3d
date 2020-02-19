@@ -93,9 +93,13 @@ Point3 get_barycentric_coords(float x, float y, Point3 a, Point3 b, Point3 c){
     float lb = 0.5f*(vc.p[0] * va.p[1] - vc.p[1] * va.p[0]);
     float lc = 0.5f*(va.p[0] * vb.p[1] - va.p[1] * vb.p[0]);
 
-//    assert(la>0);
-//    assert(lb>0);
-//    assert(lc>0);
+//    assert(la<0);
+//    assert(lb<0);
+//    assert(lc<0);
+
+    la = (la>0)?0:la;
+    lb = (lb>0)?0:lb;
+    lc = (lc>0)?0:lc;
 
     float l_sum = la+lb+lc;
 

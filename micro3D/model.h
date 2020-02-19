@@ -11,7 +11,7 @@ class Model
     Mesh & mesh;
     ColorInfo * colors;
 
-    Point3 pos, rot; //scale;
+    Point3 pos, rot, scale = {1,1,1};
 
     bool obsolete_transformation = true;
     Matrix4 transformation_matrix;
@@ -30,7 +30,7 @@ public:
     void setPos(const Point3 &value);
     Point3 getRot() const;
     void setRot(const Point3 &value);
-//    Point3 getScale() const;
+    Point3 getScale() const;
     void setScale(const Point3 &value);
 
     void move(Point3 move);
@@ -42,7 +42,7 @@ public:
     Mesh &getMesh() const;
     ColorInfo & getColorInfo() const;
     Color getColor() const;
-    void setColor(const Color &value);
+    void setColor(const Color &value, float alpha);
 };
 
 }

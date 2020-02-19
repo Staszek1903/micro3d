@@ -4,15 +4,18 @@ void m3d::Model::update_matrices()
 {
     if(obsolete_transformation){
         Matrix4 rx,ry,rz;
-        Matrix4 translation;
+        Matrix4 translation, scaling;
         rotationXMatrix(&rx,rot.p[0]);
         rotationYMatrix(&ry,rot.p[1]);
         rotationZMatrix(&rz,rot.p[2]);
         translationMatrix(&translation, pos);
 
+        scaleMatrix(&scaling,scale);
+
         rotation_matrix = multMatrix(&rx, &ry);
         rotation_matrix = multMatrix(&rotation_matrix, &rz);
         transformation_matrix = multMatrix(&rotation_matrix, &translation);
+        transformation_matrix = multMatrix(&scaling, &transformation_matrix);
 
         obsolete_transformation = false;
     }
@@ -57,16 +60,16 @@ void m3d::Model::setRot(const Point3 &value)
     rot = value;
 }
 
-//Point3 m3d::Model::getScale() const
-//{
-//    return scale;
-//}
+Point3 m3d::Model::getScale() const
+{
+    return scale;
+}
 
-//void m3d::Model::setScale(const Point3 &value)
-//{
-//    obsolete_transformation = true;
-//    scale = value;
-//}
+void m3d::Model::setScale(const Point3 &value)
+{
+    obsolete_transformation = true;
+    scale = value;
+}
 
 void m3d::Model::move(Point3 move)
 {
@@ -77,7 +80,7 @@ void m3d::Model::move(Point3 move)
 void m3d::Model::rotate(Point3 rot)
 {
     obsolete_transformation = true;
-    rot = add(this->rot, rot);
+    this->rot = add(this->rot, rot);
 }
 
 Matrix4 & m3d::Model::getTransformation()
@@ -95,6 +98,12 @@ Matrix4 &m3d::Model::getRotation()
 Color m3d::Model::getColor() const
 {
     return color;
+}
+
+void m3d::Model::setColor(const Color &value, float alpha)
+{
+    color = value;
+    this->alpha = alpha;
 }
 
 

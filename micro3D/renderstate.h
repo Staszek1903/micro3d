@@ -52,6 +52,7 @@ public:
     Point3 getCam_rot() const;
     void setCam_rot(const Point3 &value);
     void setLightPoint(const LightPoint & lightpoint);
+    LightPoint & getLightPoint();
     void setAmbientLight(float ambient);
     void setDirectionalLight(Point3 normal, float strenght);
 

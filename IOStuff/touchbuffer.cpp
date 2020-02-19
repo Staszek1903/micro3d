@@ -39,7 +39,8 @@ void TouchBuffer::removeHandler(TouchHandler &h)
 {
     TouchHandler *  ptr = &h;
     auto iter = std::find(t_handlers.begin(), t_handlers.end(), ptr);
-    t_handlers.erase(iter);
+    if(iter != t_handlers.end())
+        t_handlers.erase(iter);
 }
 
 void TouchBuffer::addHandler( KeyboardHandler & h)
@@ -52,7 +53,8 @@ void TouchBuffer::removeHandler(KeyboardHandler &h)
 {
     KeyboardHandler *  ptr = &h;
     auto iter = std::find(k_handlers.begin(), k_handlers.end(), ptr);
-    k_handlers.erase(iter);
+    if(iter != k_handlers.end())
+        k_handlers.erase(iter);
 }
 
 TouchEvent TouchBuffer::getCurrent()

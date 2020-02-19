@@ -8,7 +8,7 @@ struct LightPoint
 {
     Point3 position = {0,0,0};
     Color color = {255,255,255};
-    float distance= 10.0f;
+    float distance= -1.0f;
 };
 
 #endif // LIGHTPOINT_H

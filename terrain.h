@@ -1,16 +1,14 @@
-#ifndef LIGHTTEST_H
-#define LIGHTTEST_H
+#ifndef TERRAIN_H
+#define TERRAIN_H
 
 #include "IOStuff/programstage.h"
-#include "IOStuff/renderer.h"
-#include "IOStuff/touchable.h"
 #include "micro3D/rendercontext.h"
-#include <chrono>
+#include "IOStuff/touchable.h"
 #include "menu.h"
 
-class LightTest : public ProgramStage
+class Terrain : public ProgramStage
 {
-    m3d::RenderContext render_context;
+    m3d::RenderContext render_context{356,256};
     float circle_max = 0.0f;
 
     Mesh ship_mesh;
@@ -19,15 +17,17 @@ class LightTest : public ProgramStage
     Mesh cube_mesh;
     ColorInfo cube_color;
 
-    m3d::Model model, model2, light_model;
+    m3d::Model model{cube_mesh, &cube_color};
 
-    sf::Text fps_text;
+    Touchable exit{700,500,100,100};
 
-    std::chrono::steady_clock::time_point last_stamp;
+    sf::Font &font{Console::get().getFont()};
 
-    Touchable exit;
+    sf::Text text{"RUN",font},
+    fps_text{"FPS:", font};
+
 public:
-    LightTest();
+    Terrain();
 
     // ProgramStage interface
 public:
@@ -38,4 +38,4 @@ public:
     virtual void release() override;
 };
 
-#endif // LIGHTTEST_H
+#endif // TERRAIN_H
