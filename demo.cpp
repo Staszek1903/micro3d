@@ -47,6 +47,7 @@ void Demo::init()
     point.distance = 10;
     point.position = {0,0,3};
     normalRenderState.setLightPoint(point);
+    normalRenderState.setFar_clip(20);
 
     Console::get()<<"RenderState size: "<<sizeof (m3d::RenderState)<<"\n";
 }
@@ -140,6 +141,7 @@ void Demo::render(sf::RenderWindow &win)
     context.render(moon_green);
 
     context.clearZBuff();
+    context.setPixelFunc(m3d::putPixelZDebug);
     context.setRenderState(normalRenderState);
     context.render(ship);
 
