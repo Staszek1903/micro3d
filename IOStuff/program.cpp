@@ -23,7 +23,7 @@
     });
 
     win.setFramerateLimit(100);
-    Renderer::get().addDrawable(console_button);
+//    Renderer::get().addDrawable(console_button);
 
 	// auto mode = sf::VideoMode::getDesktopMode();
 	// float aspect_ratio = (float)mode.height / (float)mode.width; 

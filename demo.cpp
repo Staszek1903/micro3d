@@ -140,12 +140,12 @@ void Demo::render(sf::RenderWindow &win)
     context.render(moon_red);
     context.render(moon_green);
 
-    context.clearZBuff();
-    context.setPixelFunc(m3d::putPixelZDebug);
+    context.clearZBuff();               // duze obicązenie. razem z powyższymi 50% fps
+    context.setPixelFunc(m3d::putPixel);
     context.setRenderState(normalRenderState);
     context.render(ship);
 
-    context.display();
+    context.display();  // nie wiele obciązenia ~1fps
 
 
     win.draw(context);

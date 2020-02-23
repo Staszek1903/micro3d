@@ -15,6 +15,4 @@ void loadMeshFromPlyFile(const char * dir, Mesh * mesh, ColorInfo * c_info);
 void deleteMesh(Mesh * mesh);
 void deleteColorInfo(ColorInfo * info);
 
-Color colorAverage(Color * color, int * indices, int size);
-
 #endif // MODEL_H

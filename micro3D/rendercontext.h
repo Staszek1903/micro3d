@@ -35,7 +35,7 @@ class RenderContext : public sf::Sprite{
     std::vector<Point3> projected_vertices;
     std::vector<Point3> world_vertices;
 
-    void alloc_workspace(int triangle_count, int vertex_count);
+    void alloc_workspace(unsigned int triangle_count, unsigned int vertex_count);
 public:
     RenderContext(int w, int h);
     void clearColor(sf::Color color = sf::Color::Black);
@@ -47,14 +47,20 @@ public:
      */
     void clear(sf::Color color = sf::Color::Black);
     sf::Vector2u getSize();
+
+    /**
+     * @brief display - shows image in the viewport
+     */
     void display();
+
     RasterFunc getRasterFunc();
 
     m3d::RenderState & getRenderState();
     void setRenderState (const m3d::RenderState & state);
 
     void drawAxis();
-    void render(Model &model); // pamietać rzeby wyjebac jak najwiecej do C
+    void render(Model &model);
+
     void setPixelFunc(const PixelFunc &value);
 };
 

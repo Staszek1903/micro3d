@@ -44,3 +44,19 @@ Color sub(Color a, Color b)
         (uint8_t)(a.b - b.b)
     };
 }
+
+Color colorAverage(Color * array, int * indices, int size){
+    float r=0,g=0,b=0;
+    Color average = {0,0,0};
+
+    for(int i=0; i<size; ++i){
+        r += array[indices[i]].r;
+        g += array[indices[i]].g;
+        b += array[indices[i]].b;
+    }
+    average.r = r/size;
+    average.g = g/size;
+    average.b = b/size;
+
+    return average;
+}

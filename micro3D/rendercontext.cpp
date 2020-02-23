@@ -15,13 +15,17 @@ m3d::RenderContext::RenderContext(int w, int h)
     render_state.setContextSize( img.getSize() );
 }
 
-void m3d::RenderContext::alloc_workspace(int triangle_count, int vertex_count)
+void m3d::RenderContext::alloc_workspace(unsigned int triangle_count, unsigned int vertex_count)
 {
-    model_normals.resize(triangle_count);
-    world_normals.resize(triangle_count);
-    projected_normals.resize(triangle_count);
-    projected_vertices.resize(vertex_count);
-    world_vertices.resize(vertex_count);
+    if(model_normals.size() < triangle_count){
+        model_normals.resize(triangle_count);
+        world_normals.resize(triangle_count);
+        projected_normals.resize(triangle_count);
+    }
+    if(projected_vertices.size() < vertex_count){
+        projected_vertices.resize(vertex_count);
+        world_vertices.resize(vertex_count);
+    }
 }
 
 void m3d::RenderContext::clearColor(sf::Color color)
