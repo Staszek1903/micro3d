@@ -25,6 +25,21 @@ void Demo::init()
     loadMeshFromPlyFile("./moon_red.ply", &moon_red_mesh, &moon_red_color);
     loadMeshFromPlyFile("./demo_ship.ply", &ship_mesh, &ship_color);
 
+
+    Console::get()<<"TRIS COUNTS"<<
+                    "\nmilkyway: "<<milky_way_mesh.triangle_count<<
+                    "\nplanet: "<<planet_mesh.triangle_count<<
+                    "\nsun "<<sun_mesh.triangle_count<<
+                    "\nmoon green: "<<moon_green_mesh.triangle_count<<
+                    "\nmoon red: "<<moon_red_mesh.triangle_count<<
+                    "\nship: "<<ship_mesh.triangle_count<<
+                    "\nSUM: "<<(milky_way_mesh.triangle_count+
+                                planet_mesh.triangle_count+
+                                sun_mesh.triangle_count+
+                                moon_green_mesh.triangle_count+
+                                moon_red_mesh.triangle_count+
+                                ship_mesh.triangle_count)<< "\n";
+
     milky_way.setRot({0.78,0,0});
     milky_way.setColor({0,0,0},0.6);
     sun.move({0,0,5});
@@ -54,40 +69,50 @@ void Demo::init()
 
 void Demo::input(sf::Event &ev)
 {
-    if(ev.type == sf::Event::MouseButtonPressed){
+    const int rotation_button_index = 2;
+    static bool rotation_button = false;
 
+    if(ev.type == sf::Event::MouseButtonPressed){
+        if(ev.mouseButton.button == rotation_button_index) rotation_button = true;
+    } else if ( ev.type == sf::Event::MouseButtonReleased){
+        if(ev.mouseButton.button == rotation_button_index) rotation_button = false;
     }else if( ev.type == sf::Event::MouseMoved){
         static auto prev = ev.mouseMove;
 
-        if(ev.mouseMove.x <=0){
-            sf::Mouse::setPosition({1700,ev.mouseMove.y+70});
-            ev.mouseMove.x = 1700;
-            prev.x = 1700;
-        }
-        if(ev.mouseMove.x > 1700){
-            sf::Mouse::setPosition({1,ev.mouseMove.y+70});
-            ev.mouseMove.x = 1;
-            prev.x = 1;
-        }
+//        if(ev.mouseMove.x <0){
+//            sf::Mouse::setPosition({1300,ev.mouseMove.y});
+//            ev.mouseMove.x = 1300;
+//            prev.x = 1300;
+//        }
+//        if(ev.mouseMove.x > 1300){
+//            sf::Mouse::setPosition({0,ev.mouseMove.y});
+//            ev.mouseMove.x = 0;
+//            prev.x = 0;
+//        }
 
-        if(ev.mouseMove.y <=10){
-            sf::Mouse::setPosition({ev.mouseMove.x,1000});
-            ev.mouseMove.y = 1000;
-            prev.y = 1000;
-        }
-        if(ev.mouseMove.y > 1000){
-            sf::Mouse::setPosition({ev.mouseMove.y, 80});
-            ev.mouseMove.y = 70;
-            prev.y = 70;
-        }
+
+//        if(ev.mouseMove.y <=10){
+//            sf::Mouse::setPosition({ev.mouseMove.x,1000});
+//            ev.mouseMove.y = 1000;
+//            prev.y = 1000;
+//        }
+//        if(ev.mouseMove.y > 1000){
+//            sf::Mouse::setPosition({ev.mouseMove.y, 80});
+//            ev.mouseMove.y = 70;
+//            prev.y = 70;
+//        }
+      //  Console::get()<<"mouse pos {"<<ev.mouseMove.x<<","<<ev.mouseMove.y<<"}\n";
 
 
         float dx =  ev.mouseMove.x - prev.x;
         float dy = ev.mouseMove.y - prev.y;
 
-        nullRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
-        planetRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
-        normalRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
+        if(rotation_button){
+            nullRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
+            planetRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
+            normalRenderState.rotateCamera({dx/500.0f, dy/500.0f, 0.0f});
+
+        }
 
         prev = ev.mouseMove;
 

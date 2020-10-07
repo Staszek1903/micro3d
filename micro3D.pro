@@ -4,7 +4,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 LIBS += -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-window -lsfml-system
-LIBS += -lassimp
 LIBS += -lpthread
 
 SOURCES += \
@@ -26,12 +25,18 @@ SOURCES += \
     micro3D/mesh.cpp \
     micro3D/micro3d.cpp \
     micro3D/model.cpp \
+    micro3D/multiThread/fragmentjob.cpp \
+    micro3D/multiThread/fragmentworker.cpp \
+    micro3D/multiThread/vertexjob.cpp \
+    micro3D/multiThread/vertexworker.cpp \
     micro3D/point3f.cpp \
     micro3D/rasterization.cpp \
     micro3D/rendercontext.cpp \
+    micro3D/rendercontextmt.cpp \
     micro3D/renderstate.cpp \
     micro3D/shaders.cpp \
     micro3D/transformation.cpp \
+    mttest.cpp \
     terrain.cpp
 
 HEADERS += \
@@ -56,10 +61,17 @@ HEADERS += \
     micro3D/mesh.h \
     micro3D/micro3d.h \
     micro3D/model.h \
+    micro3D/multiThread/fragmentjob.h \
+    micro3D/multiThread/fragmentworker.h \
+    micro3D/multiThread/jobqueue.h \
+    micro3D/multiThread/vertexjob.h \
+    micro3D/multiThread/vertexworker.h \
     micro3D/point3f.h \
     micro3D/rasterization.h \
     micro3D/rendercontext.h \
+    micro3D/rendercontextmt.h \
     micro3D/renderstate.h \
     micro3D/shaders.h \
     micro3D/transformation.h \
+    mttest.h \
     terrain.h

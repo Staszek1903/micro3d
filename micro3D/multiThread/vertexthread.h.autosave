@@ -1,0 +1,18 @@
+#ifndef VERTEXTHREAD_H
+#define VERTEXTHREAD_H
+
+#include <thread>
+#include "jobqueue.h"
+
+class VertexThread
+{
+    void vertex_thread();
+    std::thread _thread;
+public:
+    VertexThread(JobQueue<VertexJob> & v_queue);
+    VertexThread(const VertexThread&) = delete;
+    
+    bool run();   
+};
+
+#endif // VERTEXTHREAD_H

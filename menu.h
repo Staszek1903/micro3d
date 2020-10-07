@@ -8,13 +8,15 @@
 #include "benchmark.h"
 #include "terrain.h"
 #include "demo.h"
+#include "mttest.h"
 
 class Menu : public ProgramStage
 {
     Touchable guzik1{100,100,200,50},
     guzik2{100,200,200,50},
     guzik3{350,100,200,50},
-    guzik4{350,200,200,50};
+    guzik4{350,200,200,50},
+    guzik5{100,300,200,50};
 
     sf::Font &font{Console::get().getFont()};
     sf::Text text;

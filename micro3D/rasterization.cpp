@@ -262,3 +262,14 @@ Point3 get_bary_point(Point3 a, Point3 b, Point3 c, Point3 bary)
     };
 }
 
+
+Triangle make_triange(Point3 a, Point3 b, Point3 c)
+{
+    Triangle ret;
+
+    ret.p[0] = {(int)a.p[0], (int)a.p[1]};
+    ret.p[1] = {(int)b.p[0], (int)b.p[1]};
+    ret.p[2] = {(int)c.p[0], (int)c.p[1]};
+
+    return ret;
+}

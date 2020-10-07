@@ -4,7 +4,12 @@
 //#define DRAW_Z_BUFFER
 
 void m3d::putPixelSimple(unsigned int x, unsigned int y, void * arg){
-    m3d::PixelArg * parg = (m3d::PixelArg*)arg;
+    std::mutex raster_mutex;
+    std::lock_guard quard (raster_mutex);
+
+    m3d::PixelArgSimple * parg = (m3d::PixelArgSimple*)arg;
+    sf::Vector2u size = parg->image->getSize();
+    if(x >= size.x || x < 0 || y >= size.y || y <0) return;
 
     sf::Color color(parg->colors[0].r,parg->colors[0].g,parg->colors[0].b);
     parg->image->setPixel(x,y, color);

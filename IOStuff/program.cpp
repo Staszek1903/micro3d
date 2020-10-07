@@ -4,7 +4,7 @@
     //win.setMouseCursorVisible(false);
 	Console::set_window(&win);
 	Console::get();
-    Console::get().show(false);
+    Console::get().show(true);
     Renderer::setWindow(win);
 	Renderer::get();
 
@@ -22,7 +22,7 @@
         }
     });
 
-    win.setFramerateLimit(100);
+    win.setFramerateLimit(200);
 //    Renderer::get().addDrawable(console_button);
 
 	// auto mode = sf::VideoMode::getDesktopMode();
@@ -56,7 +56,7 @@ void Program::run()
 		{
 
             //error_generate(exc.what());
-			Console::get() << "EXCEPTION:\n " << exc.what() << "\n PRESS ANY KEY TO PROCEED\n";
+            Console::get() << "EXCEPTION:\n " << exc.what() << "\n PRESS ANY KEY TO PROCEED, ESC TO EXIT\n";
 			render();
 			halt_for_input();
 		}
@@ -121,7 +121,7 @@ void Program::input()
 
 		case sf::Event::KeyPressed:
 			TouchBuffer::get().emit(KeyboardEvent(ev.key.code, KeyboardEvent::PRESSED));
-            if(ev.key.code == sf::Keyboard::F12){
+            if(ev.key.code == sf::Keyboard::F10){                                                       // Console hiding/showing
                     static bool shown = false;
                     shown = !shown;
                     Console::get().show(shown);

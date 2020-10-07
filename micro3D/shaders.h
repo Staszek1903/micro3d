@@ -5,6 +5,7 @@
 #include "point3f.h"
 #include "lightpoint.h"
 #include "rasterization.h"
+#include <mutex>
 
 namespace m3d {
 
@@ -18,7 +19,7 @@ struct PixelArg{
     Point3 &normal;
 
     sf::Vector2u screen_size;
-    float z_min, z_max;
+    float z_min, z_max; // FOR DEBUG INFORMATION
 
     LightPoint &light_point;
     float shade = 1.0f;
@@ -28,6 +29,18 @@ struct PixelArg{
                 Point3 & normal, LightPoint & point)
     : colors(colors), vertices_projected(vertices_projected), vertices_world(vertices_world),
       normal(normal), light_point(point) {}
+};
+
+struct PixelArgSimple{
+    sf::Image * image;
+    Color colors [3];
+
+    PixelArgSimple(sf::Image & image, Color c){
+        colors[0] = c;
+        colors[1] = c;
+        colors[2] = c;
+        this->image = &image;
+    }
 };
 
 void putPixelSimple(unsigned int x, unsigned int y, void * arg);

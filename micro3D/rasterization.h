@@ -27,6 +27,8 @@ typedef struct { int x; int y; } Point;
 typedef struct { Point a,b; int dx, dy, x, y, D; char flags;} BresenhamState;
 typedef struct { Point p[3]; } Triangle;
 
+Triangle make_triange(Point3 a, Point3 b, Point3 c);
+
 void bresenham_init(Point3 p1, Point3 p2, BresenhamState * state);
 Point bresenham_next(BresenhamState * state);
 

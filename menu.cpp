@@ -16,16 +16,20 @@ void Menu::init()
     });
 
     guzik3.setHandler([](const TouchEvent & ev){
-       ProgramStage::next_stage<Terrain>();
+        ProgramStage::next_stage<Terrain>();
     });
 
     guzik4.setHandler([](const TouchEvent & ev){
-       ProgramStage::next_stage<Demo>();
+        ProgramStage::next_stage<Demo>();
+    });
+
+    guzik5.setHandler([](const TouchEvent & ev){
+        ProgramStage::next_stage<MTTest>();
     });
 
     text.setFont(font);
     text.setPosition(110,100);
-    text.setString("Light Test              Terrain\n\n\nBenchmark           Demo");
+    text.setString("Light Test              Terrain\n\n\nBenchmark           Demo\n\n\nMultiThread");
 }
 
 void Menu::input(sf::Event &ev)

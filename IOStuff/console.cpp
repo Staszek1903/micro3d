@@ -98,6 +98,9 @@ void Console::release()
 
 void Console::addContent(const std::string &text)
 {
+    std::mutex lock;
+    std::lock_guard quard(lock);
+
     for(auto a: text)
     {
     	addChar(a);
